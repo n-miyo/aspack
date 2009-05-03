@@ -1,0 +1,140 @@
+------------------------------------------------------------
+			00README.ja
+
+  $Id$
+------------------------------------------------------------
+
+[WHAT'S THIS]
+
+特定ディレクトリ配下にある .java ファイルを探し出し、その中に
+書かれた package 文に従ったディレクトリレイアウトを構成し、
+symblic link を張るスクリプトです。
+
+
+[SYNOPSIS]
+
+  aspack.rb [-n] [-c] src_dir dst_dir
+
+
+[DESCRIPTION]
+
+解析対象 java ファイルの置かれている最上位ディレクトリを src
+へ指定します。再起的にディレクトリをたどりながら、.java ファ
+イルの package を解析し、dst_dir 配下へレイアウトを作成してゆ
+きます。package の書かれていない .java ファイルは dst_dir 直
+下におかれます。
+
+dst_dir が存在しない場合、自動的に作られます。
+
+各ディレクトリに同名のファイルが存在していた場合、上書きされ
+ることに注意してください。
+
+以下のオプションが使えます。
+
+  -n  実際にコマンド実行をすることなく、実行するコマンドを表示します
+  -c  dst_dir に対し、symbolic link ではなく、ファイルコピーを
+      行います。
+
+
+[EXAMPLE]
+
+例えば、以下のディレクトリ構成があったとき、
+
+- x/y/z/foo.java
+  - packgae a.b;
+- x/yy/z/bar.java
+  - packgae a.c;
+- x/yy/zz/baz.java
+  - (no packgae sentence)
+
+次のコマンド、
+
+  % ./aspack.rb x dst
+
+を実行すると、次の構成結果が生成されます
+
+  dst/baz.java
+      a/b/foo.java
+        c/bar.java
+
+[USE CASE]
+
+主に Android SDK を使って標準ライブラリ Java のソースコードを
+debugger で追いかけやすくするための補助プログラムとして作りま
+した。
+
+Android SDK では、デフォルト状態では、標準ライブラリ
+(android.jar)のソースを debugger で追いかけることが出来ません。
+また、ADT により、android.jar へソースをアタッチすることも禁
+止されています。
+
+ただし、platform/*/ 配下の sources ディレクトリ以下へ、
+android.jar と同じ構成を保ったまま java ファイルを配置するこ
+とで、そのファイルをソースコードとして利用してくれます。この
+ツールは、この手助けをするために作られました。
+
+こんな感じで利用します。
+
+  % export SDK=<Android-SDKを展開したディレクトリ>/platforms/android-1.5(または 1.1)
+  % export SRCDIR=<Android-source を repo sync したディレクトリ>
+  % aspack.rb ${SRCDIR} ${SDK}/sources
+
+
+[NOTICE]
+
+* 動作確認は MacOS X 10.5 + ruby 1.8.6 で行いました。
+* symbolic link は絶対パスで張られます
+
+
+[THANKS]
+
+* Android の source ディレクトリに関する情報は Erick Blirke
+  さんの blog を参考にさせていただきました。
+
+    <URL:http://stuffthathappens.com/blog/2008/11/01/browsing-android-source-in-eclipse/>
+
+* スクリプトのアイディアは Michael Forster さんの blog から
+  頂きました。
+
+    <URL:http://blog.michael-forster.de/2008/12/view-android-source-code-in-eclipse.html>
+
+
+[CONTACT]
+
+  E-mail: n-miyo@tempus.org (MIYOKAWA, Nobuyoshi)
+  WebSite:
+    <URL:http://blogger.tempus.org/>
+    <URL:http://www.tempus.org/>
+
+
+[LICENSE]
+
+Copyright (c) 2009, MIYOKAWA, Nobuyoshi
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  2. Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in the
+     documentation and/or other materials provided with the distribution.
+  3. Neither the name of the authors nor the names of its
+     contributors may be used to endorse or promote products derived
+     from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
+OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+; EOF
